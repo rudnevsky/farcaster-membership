@@ -5,9 +5,6 @@ import { useTheme } from "@/app/context/ThemeContext";
 import { useUser } from "@/app/context/UserContext";
 
 export default function Navbar() {
-  const { isDarkMode } = useTheme();
-  const { frameContext } = useUser();
-  
   return (
     <nav className="flex justify-center items-center mb-3 w-full">
       <div className="flex items-center justify-center gap-3">

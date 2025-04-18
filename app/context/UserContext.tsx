@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { TalentProfile } from "@/app/types/talent";
 import { fetchUserByFid } from "@/app/services/talent";
 import { FrameContext } from "@/app/types/farcaster";
@@ -72,7 +72,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isSDKLoaded]);
 
-  const checkTalentChannelFollowStatus = async () => {
+  const checkTalentChannelFollowStatus = useCallback(async () => {
     if (!frameContext?.user?.fid) {
       setIsFollowingTalentChannel(false);
       return;
@@ -85,7 +85,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       console.error("Error checking talent channel follow status:", err);
       setIsFollowingTalentChannel(false);
     }
-  };
+  }, [frameContext?.user?.fid]);
+
+  useEffect(() => {
+    if (frameContext?.user?.fid) {
+      checkTalentChannelFollowStatus();
+    }
+  }, [frameContext?.user?.fid, checkTalentChannelFollowStatus]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -118,12 +124,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
     fetchUserData();
   }, [frameContext?.user?.fid]);
-
-  useEffect(() => {
-    if (frameContext?.user?.fid) {
-      checkTalentChannelFollowStatus();
-    }
-  }, [frameContext?.user?.fid, checkTalentChannelFollowStatus]);
 
   return (
     <UserContext.Provider 
