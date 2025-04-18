@@ -8,50 +8,33 @@ import { FrameContext } from "@/app/types/farcaster";
  * @param channelId The ID of the channel to check (e.g., "talent")
  * @returns A promise that resolves to a boolean indicating if the user is following the channel
  */
-export async function isFollowingChannel(
-  frameContext: FrameContext | undefined,
-  channelId: string
-): Promise<boolean> {
-  if (!frameContext?.user?.fid) {
-    console.log("No user FID available, returning false");
-    return false;
-  }
-
+export async function isFollowingChannel(fid: string): Promise<boolean> {
   try {
-    // In development, we'll simulate the API response
-    if (process.env.NODE_ENV === "development") {
-      console.log(`[DEV] Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
-      // For development, we'll return false by default
-      return false;
-    }
-
-    console.log(`[PROD] Frame context:`, JSON.stringify(frameContext, null, 2));
-    console.log(`[PROD] Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
+    console.log(`Checking if user ${fid} is following /talent channel`);
     
-    // Make the API call to our backend endpoint
-    const apiUrl = `/api/talent/follow-status?fid=${frameContext.user.fid}&channelId=${channelId}`;
-    console.log(`[PROD] Making API call to:`, apiUrl);
-    
-    const response = await fetch(apiUrl);
-
-    console.log(`[PROD] API response status:`, response.status);
-    console.log(`[PROD] API response status text:`, response.statusText);
+    const response = await fetch(
+      `/api/talent/follow-status?fid=${fid}&channelId=talent`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      console.error(`[PROD] Error checking channel follow status: ${response.statusText}`);
+      const errorData = await response.json();
+      console.error("Follow status check failed:", errorData);
       return false;
     }
 
     const data = await response.json();
-    console.log("[PROD] API response data:", JSON.stringify(data, null, 2));
+    console.log("Follow status response:", data);
     
-    // Check if the user is following the channel
-    const isFollowing = data.result?.isFollowing || false;
-    console.log(`[PROD] User ${frameContext.user.fid} is ${isFollowing ? "following" : "not following"} channel ${channelId}`);
-    
-    return isFollowing;
+    // The Warpcast API returns { following: true/false }
+    return data.following === true;
   } catch (error) {
-    console.error("Error checking channel follow status:", error);
+    console.error("Error checking follow status:", error);
     return false;
   }
 } 

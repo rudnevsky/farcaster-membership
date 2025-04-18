@@ -5,37 +5,41 @@ import { useTheme } from "@/app/context/ThemeContext";
 import { Check } from "lucide-react";
 import ExternalLink from "@/app/components/ExternalLink";
 import { useEffect } from "react";
+import { FrameContext } from "@/app/types/farcaster";
 
-export default function HowToEarn() {
+interface HowToEarnProps {
+  isFollowing: boolean;
+  onCheckFollowStatus: () => Promise<void>;
+}
+
+export default function HowToEarn({ isFollowing, onCheckFollowStatus }: HowToEarnProps) {
   const { 
     isLoading: isUserLoading, 
     hasBasenameCredential, 
     talentProfile, 
     basename,
-    isFollowingTalentChannel,
-    checkTalentChannelFollowStatus,
     frameContext
   } = useUser();
   const { isDarkMode } = useTheme();
 
   // Check the follow status when the component mounts
   useEffect(() => {
-    checkTalentChannelFollowStatus();
+    onCheckFollowStatus();
     
     // Set up a periodic check every 30 seconds
     const intervalId = setInterval(() => {
-      checkTalentChannelFollowStatus();
+      onCheckFollowStatus();
     }, 30000);
     
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, [checkTalentChannelFollowStatus]);
+  }, [onCheckFollowStatus]);
 
   const EARNING_STEPS = [
     {
       text: "Follow /talent channel",
       url: "https://warpcast.com/~/channel/talent",
-      condition: !isUserLoading && frameContext?.user?.fid && isFollowingTalentChannel,
+      condition: !isUserLoading && frameContext?.user?.fid && isFollowing,
     },
     {
       text: `Own a Basename ${basename ? `(${basename})` : ""}`,
@@ -98,11 +102,7 @@ export default function HowToEarn() {
               </div>
               <ExternalLink
                 href={step.url}
-                className={`${
-                  isDarkMode
-                    ? "text-white hover:text-neutral-500"
-                    : "text-neutral-800 hover:text-neutral-600"
-                }`}
+                className={`flex-1 ${isDarkMode ? "text-white" : "text-neutral-800"}`}
               >
                 {step.text}
               </ExternalLink>

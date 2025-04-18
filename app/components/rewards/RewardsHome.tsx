@@ -1,10 +1,15 @@
 import RewardsActions from "@/app/components/RewardsActions";
 import HowToEarn from "@/app/components/rewards/HowToEarn";
 
-export default function RewardsHome() {
+interface RewardsHomeProps {
+  isFollowing: boolean;
+  onCheckFollowStatus: () => Promise<void>;
+}
+
+export default function RewardsHome({ isFollowing, onCheckFollowStatus }: RewardsHomeProps) {
   return (
     <>
-      <HowToEarn />
+      <HowToEarn isFollowing={isFollowing} onCheckFollowStatus={onCheckFollowStatus} />
       <RewardsActions />
     </>
   );
