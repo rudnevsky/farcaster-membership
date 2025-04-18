@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useTheme } from "@/app/context/ThemeContext";
-import { useUser } from "@/app/context/UserContext";
 
 export default function Navbar() {
   return (
