@@ -28,19 +28,11 @@ export async function isFollowingChannel(
     console.log(`[PROD] Frame context:`, JSON.stringify(frameContext, null, 2));
     console.log(`[PROD] Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
     
-    // Make the API call to check if the user is following the channel
-    const apiUrl = `https://api.warpcast.com/v2/user-following-channel-status?fid=${frameContext.user.fid}&channelId=${channelId}`;
+    // Make the API call to our backend endpoint
+    const apiUrl = `/api/talent/follow-status?fid=${frameContext.user.fid}&channelId=${channelId}`;
     console.log(`[PROD] Making API call to:`, apiUrl);
     
-    const response = await fetch(
-      apiUrl,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(apiUrl);
 
     console.log(`[PROD] API response status:`, response.status);
     console.log(`[PROD] API response status text:`, response.statusText);
