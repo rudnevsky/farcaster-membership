@@ -25,11 +25,15 @@ export async function isFollowingChannel(
       return false;
     }
 
-    console.log(`Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
+    console.log(`[PROD] Frame context:`, JSON.stringify(frameContext, null, 2));
+    console.log(`[PROD] Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
     
     // Make the API call to check if the user is following the channel
+    const apiUrl = `https://api.warpcast.com/v2/user-following-channel-status?fid=${frameContext.user.fid}&channelId=${channelId}`;
+    console.log(`[PROD] Making API call to:`, apiUrl);
+    
     const response = await fetch(
-      `https://api.warpcast.com/v2/user-following-channel-status?fid=${frameContext.user.fid}&channelId=${channelId}`,
+      apiUrl,
       {
         method: "GET",
         headers: {
@@ -38,17 +42,20 @@ export async function isFollowingChannel(
       }
     );
 
+    console.log(`[PROD] API response status:`, response.status);
+    console.log(`[PROD] API response status text:`, response.statusText);
+
     if (!response.ok) {
-      console.error(`Error checking channel follow status: ${response.statusText}`);
+      console.error(`[PROD] Error checking channel follow status: ${response.statusText}`);
       return false;
     }
 
     const data = await response.json();
-    console.log("API response:", JSON.stringify(data));
+    console.log("[PROD] API response data:", JSON.stringify(data, null, 2));
     
     // Check if the user is following the channel
     const isFollowing = data.result?.isFollowing || false;
-    console.log(`User ${frameContext.user.fid} is ${isFollowing ? "following" : "not following"} channel ${channelId}`);
+    console.log(`[PROD] User ${frameContext.user.fid} is ${isFollowing ? "following" : "not following"} channel ${channelId}`);
     
     return isFollowing;
   } catch (error) {
