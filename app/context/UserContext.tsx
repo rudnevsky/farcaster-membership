@@ -5,6 +5,7 @@ import { TalentProfile } from "@/app/types/talent";
 import { fetchUserByFid } from "@/app/services/talent";
 import { FrameContext } from "@/app/types/farcaster";
 import { sdk } from "@farcaster/frame-sdk";
+import { isFollowingChannel } from "@/app/services/farcaster";
 
 const DEV_FRAME_CONTEXT: FrameContext = {
   user: {
@@ -26,6 +27,8 @@ interface UserContextType {
   hasGithubCredential: boolean;
   hasBasenameCredential: boolean;
   basename: string | null;
+  isFollowingTalentChannel: boolean;
+  checkTalentChannelFollowStatus: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType>({
@@ -36,6 +39,8 @@ const UserContext = createContext<UserContextType>({
   hasGithubCredential: false,
   hasBasenameCredential: false,
   basename: null,
+  isFollowingTalentChannel: false,
+  checkTalentChannelFollowStatus: async () => {},
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
@@ -47,6 +52,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [hasBasenameCredential, setHasBasenameCredential] = useState(false);
   const [basename, setBasename] = useState<string | null>(null);
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const [isFollowingTalentChannel, setIsFollowingTalentChannel] = useState(false);
 
   useEffect(() => {
     const loadSDK = async () => {
@@ -66,6 +72,21 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isSDKLoaded]);
 
+  const checkTalentChannelFollowStatus = async () => {
+    if (!frameContext?.user?.fid) {
+      setIsFollowingTalentChannel(false);
+      return;
+    }
+
+    try {
+      const isFollowing = await isFollowingChannel(frameContext, "talent");
+      setIsFollowingTalentChannel(isFollowing);
+    } catch (err) {
+      console.error("Error checking talent channel follow status:", err);
+      setIsFollowingTalentChannel(false);
+    }
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (!frameContext?.user?.fid) {
@@ -80,12 +101,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         setHasBasenameCredential(response.hasBasenameCredential || false);
         setBasename(response.basename || null);
         setError(null);
+        
+        // Check if the user is following the talent channel
+        await checkTalentChannelFollowStatus();
       } catch (err) {
         setError(err instanceof Error ? err : new Error("Failed to fetch user data"));
         setTalentProfile(null);
         setHasGithubCredential(false);
         setHasBasenameCredential(false);
         setBasename(null);
+        setIsFollowingTalentChannel(false);
       } finally {
         setIsLoading(false);
       }
@@ -95,7 +120,19 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [frameContext?.user?.fid]);
 
   return (
-    <UserContext.Provider value={{ isLoading, error, talentProfile, frameContext, hasGithubCredential, hasBasenameCredential, basename }}>
+    <UserContext.Provider 
+      value={{ 
+        isLoading, 
+        error, 
+        talentProfile, 
+        frameContext, 
+        hasGithubCredential, 
+        hasBasenameCredential, 
+        basename,
+        isFollowingTalentChannel,
+        checkTalentChannelFollowStatus
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

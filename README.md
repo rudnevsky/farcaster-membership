@@ -1,8 +1,8 @@
-# Builder Rewards
+# Mini App by @talent
 
-Weekly Rewards for the most impactful builders.
+A Farcaster Frame application that helps users become eligible to post in the /talent channel.
 
-> Builder Rewards is a real-time, automated rewards engine designed to recognize and incentivize top Builders in the Base ecosystem. By tracking onchain deployments, GitHub activity, and overall Builder impact, we ensure that the most valuable contributors are rewarded every week—no applications, no posting, just shipping.
+> This Mini App guides users through the steps required to become eligible for posting in the /talent channel on Farcaster. It checks if users are following the /talent channel, own a Basename, have a Human Checkmark, and have increased their Builder Score.
 
 ## Getting Started
 
@@ -19,3 +19,10 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Features
+
+- Check eligibility for posting in the /talent channel
+- Follow the /talent channel directly from the app
+- Track progress toward eligibility
+- Connect with Talent Protocol to increase Builder Score

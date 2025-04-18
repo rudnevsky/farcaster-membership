@@ -1,33 +1,25 @@
 "use client";
 
-import React, { createContext, useContext, useEffect } from "react";
-import { useSponsor } from "@/app/context/SponsorContext";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface ThemeContextType {
   isDarkMode: boolean;
+  toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { selectedSponsorSlug } = useSponsor();
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Always set isDarkMode to false to force light mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const isDarkMode = selectedSponsorSlug !== "base";
-  
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
-
-  const value = {
-    isDarkMode
+  const toggleTheme = () => {
+    // This function won't do anything since we're forcing light mode
+    setIsDarkMode(false);
   };
 
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

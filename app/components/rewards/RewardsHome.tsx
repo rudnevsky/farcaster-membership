@@ -1,13 +1,11 @@
 import RewardsActions from "@/app/components/RewardsActions";
-import RewardsHeader from "@/app/components/RewardsHeader";
-import RewardsLeaderboard from "@/app/components/rewards/RewardsLeaderboard";
+import HowToEarn from "@/app/components/rewards/HowToEarn";
 
 export default function RewardsHome() {
   return (
     <>
-      <RewardsHeader />
+      <HowToEarn />
       <RewardsActions />
-      <RewardsLeaderboard />
     </>
   );
 }

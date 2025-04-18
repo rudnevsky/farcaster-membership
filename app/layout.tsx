@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import Navbar from "@/app/components/Navbar";
-import { SponsorProvider } from "@/app/context/SponsorContext";
-import { GrantProvider } from "@/app/context/GrantContext";
-import { LeaderboardProvider } from "@/app/context/LeaderboardContext";
 import { ThemeProvider } from "@/app/context/ThemeContext";
-import UserStatus from "@/app/components/UserStatus";
 import { UserProvider } from "@/app/context/UserContext";
 import { Footer } from "@/app/components/Footer";
 import WarpcastBanner from "@/app/components/WarpcastBanner";
@@ -21,10 +16,10 @@ const frame = {
   version: "next",
   imageUrl: "https://www.builderscore.xyz/images/frame-image.png",
   button: {
-    title: "Earn Builder Rewards",
+    title: "Mini App by @talent",
     action: {
       type: "launch_frame",
-      name: "Builder Rewards",
+      name: "Mini App by @talent",
       url: "https://www.builderscore.xyz",
       splashImageUrl: "https://www.builderscore.xyz/images/icon.png",
       splashBackgroundColor: "#0D0740",
@@ -33,15 +28,23 @@ const frame = {
 };
 
 export const metadata: Metadata = {
-  title: "Builder Rewards",
-  description: "Weekly Rewards for the most impactful builders.",
+  title: "Mini App by @talent",
+  description: "A mini app by @talent",
+  icons: {
+    icon: [
+      {
+        url: "/favicon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+  },
   openGraph: {
-    title: "Builder Rewards",
-    description: "Weekly Rewards for the most impactful builders.",
+    title: "Mini App by @talent",
+    description: "A mini app by @talent",
     images: [
       {
         url: "https://www.builderscore.xyz/images/frame-image.png",
-        alt: "Builder Rewards",
+        alt: "Mini App by @talent",
       },
     ],
   },
@@ -57,26 +60,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body className={`${inter.variable} antialiased`}>
-        <SponsorProvider>
-          <GrantProvider>
-            <UserProvider>
-              <LeaderboardProvider>
-                <ThemeProvider>
-                  <WarpcastBanner />
-                  <div className="flex flex-col min-h-dvh max-w-3xl mx-auto py-4 px-4">
-                    {process.env.NODE_ENV === "development" && <UserStatus />}
-                    <Navbar />
-                    <main className="flex flex-col h-full">{children}</main>
-                    <Footer />
-                  </div>
-                </ThemeProvider>
-              </LeaderboardProvider>
-            </UserProvider>
-          </GrantProvider>
-        </SponsorProvider>
+        <UserProvider>
+          <ThemeProvider>
+            <WarpcastBanner />
+            <div className="flex flex-col min-h-dvh max-w-3xl mx-auto py-4 px-4">
+              <Navbar />
+              <main className="flex flex-col h-full">{children}</main>
+              <Footer />
+            </div>
+          </ThemeProvider>
+        </UserProvider>
       </body>
-      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
     </html>
   );
 }
