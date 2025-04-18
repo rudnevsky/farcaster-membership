@@ -119,6 +119,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     fetchUserData();
   }, [frameContext?.user?.fid]);
 
+  useEffect(() => {
+    if (frameContext?.user?.fid) {
+      checkTalentChannelFollowStatus();
+    }
+  }, [frameContext?.user?.fid, checkTalentChannelFollowStatus]);
+
   return (
     <UserContext.Provider 
       value={{ 

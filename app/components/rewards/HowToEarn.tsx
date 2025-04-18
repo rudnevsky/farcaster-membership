@@ -76,7 +76,7 @@ export default function HowToEarn() {
           </p>
         ) : (
           <p className={`mb-6 text-sm ${isDarkMode ? "text-neutral-500" : "text-neutral-600"}`}>
-            You're not eligible to post in /talent channel yet.
+            You&apos;re not eligible to post in /talent channel yet.
           </p>
         )}
 
@@ -111,7 +111,7 @@ export default function HowToEarn() {
         </ul>
 
         <p className={`text-sm ${isDarkMode ? "text-neutral-500" : "text-neutral-600"} mt-6`}>
-          Invitations are automatically sent to eligible users on a daily basis. Once you complete all the steps above, you'll get an invite to become a member. Just check back in the /talent channel a little bit later.
+          Invitations are automatically sent to eligible users on a daily basis. Once you complete all the steps above, you&apos;ll get an invite to become a member. Just check back in the /talent channel a little bit later.
         </p>
       </div>
     </div>
