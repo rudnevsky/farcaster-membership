@@ -74,12 +74,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const checkTalentChannelFollowStatus = useCallback(async () => {
     if (!frameContext?.user?.fid) {
+      console.log("No user FID available in checkTalentChannelFollowStatus");
       setIsFollowingTalentChannel(false);
       return;
     }
 
     try {
+      console.log("Checking talent channel follow status for user:", frameContext.user.fid);
       const isFollowing = await isFollowingChannel(frameContext, "talent");
+      console.log("Talent channel follow status result:", isFollowing);
       setIsFollowingTalentChannel(isFollowing);
     } catch (err) {
       console.error("Error checking talent channel follow status:", err);

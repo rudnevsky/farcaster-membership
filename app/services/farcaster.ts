@@ -13,6 +13,7 @@ export async function isFollowingChannel(
   channelId: string
 ): Promise<boolean> {
   if (!frameContext?.user?.fid) {
+    console.log("No user FID available, returning false");
     return false;
   }
 
@@ -21,12 +22,12 @@ export async function isFollowingChannel(
     if (process.env.NODE_ENV === "development") {
       console.log(`[DEV] Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
       // For development, we'll return false by default
-      // This ensures the follow step is not marked as completed until explicitly set
       return false;
     }
 
+    console.log(`Checking if user ${frameContext.user.fid} is following channel ${channelId}`);
+    
     // Make the API call to check if the user is following the channel
-    // Using the correct endpoint from the Farcaster API documentation
     const response = await fetch(
       `https://api.warpcast.com/v2/user-following-channel-status?fid=${frameContext.user.fid}&channelId=${channelId}`,
       {
@@ -43,9 +44,13 @@ export async function isFollowingChannel(
     }
 
     const data = await response.json();
+    console.log("API response:", JSON.stringify(data));
     
     // Check if the user is following the channel
-    return data.result?.isFollowing || false;
+    const isFollowing = data.result?.isFollowing || false;
+    console.log(`User ${frameContext.user.fid} is ${isFollowing ? "following" : "not following"} channel ${channelId}`);
+    
+    return isFollowing;
   } catch (error) {
     console.error("Error checking channel follow status:", error);
     return false;
