@@ -4,16 +4,16 @@ import { FrameContext } from "@/app/types/farcaster";
 
 /**
  * Checks if a user is following a specific Farcaster channel
- * @param frameContext The Farcaster frame context containing user information
+ * @param fid The user's Farcaster ID
  * @param channelId The ID of the channel to check (e.g., "talent")
  * @returns A promise that resolves to a boolean indicating if the user is following the channel
  */
-export async function isFollowingChannel(fid: string): Promise<boolean> {
+export async function isFollowingChannel(fid: string | number, channelId: string = "talent"): Promise<boolean> {
   try {
-    console.log(`Checking if user ${fid} is following /talent channel`);
+    console.log(`Checking if user ${fid} is following /${channelId} channel`);
     
     const response = await fetch(
-      `/api/talent/follow-status?fid=${fid}&channelId=talent`,
+      `/api/talent/follow-status?fid=${fid}&channelId=${channelId}`,
       {
         method: "GET",
         headers: {

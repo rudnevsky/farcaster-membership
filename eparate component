@@ -1,0 +1,5 @@
+[33m73c6268[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: add use client directive to page.tsx
+[33mfbd4778[m feat: add Talent Protocol API key integration
+[33m52d8fd6[m fix: update follow status checking and frame context handling
+[33m5524b46[m Add backend API route for follow status check to fix CORS issues
+[33m35f7fc1[m Add detailed production logging for follow status checks

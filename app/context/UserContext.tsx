@@ -72,31 +72,29 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isSDKLoaded]);
 
-  const checkTalentChannelFollowStatus = useCallback(async () => {
-    if (!frameContext?.user?.fid) {
-      console.log("[PROD] No user FID available in checkTalentChannelFollowStatus");
-      console.log("[PROD] Frame context:", JSON.stringify(frameContext, null, 2));
-      setIsFollowingTalentChannel(false);
-      return;
-    }
-
+  const checkTalentChannelFollowStatus = async (): Promise<void> => {
     try {
-      console.log("[PROD] Frame context in checkTalentChannelFollowStatus:", JSON.stringify(frameContext, null, 2));
-      console.log("[PROD] Checking talent channel follow status for user:", frameContext.user.fid);
-      const isFollowing = await isFollowingChannel(frameContext, "talent");
-      console.log("[PROD] Talent channel follow status result:", isFollowing);
+      if (!frameContext?.user?.fid) {
+        console.log("No FID available in frame context");
+        setIsFollowingTalentChannel(false);
+        return;
+      }
+
+      console.log("Checking follow status for FID:", frameContext.user.fid);
+      const isFollowing = await isFollowingChannel(frameContext.user.fid);
+      console.log("Follow status result:", isFollowing);
       setIsFollowingTalentChannel(isFollowing);
-    } catch (err) {
-      console.error("[PROD] Error checking talent channel follow status:", err);
+    } catch (error) {
+      console.error("Error checking follow status:", error);
       setIsFollowingTalentChannel(false);
     }
-  }, [frameContext?.user?.fid]);
+  };
 
   useEffect(() => {
     if (frameContext?.user?.fid) {
       checkTalentChannelFollowStatus();
     }
-  }, [frameContext?.user?.fid, checkTalentChannelFollowStatus]);
+  }, [frameContext?.user?.fid]);
 
   useEffect(() => {
     const fetchUserData = async () => {
