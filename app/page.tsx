@@ -1,3 +1,5 @@
+"use client";
+
 import { useFrameContext } from "@/app/hooks/useFrameContext";
 import { isFollowingChannel } from "@/app/services/farcaster";
 import RewardsHome from "@/app/components/rewards/RewardsHome";
