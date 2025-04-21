@@ -1,59 +1,57 @@
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  // Add CORS headers
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
-  // Handle OPTIONS request for CORS preflight
-  if (request.method === "OPTIONS") {
-    return new NextResponse(null, { headers });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const fid = searchParams.get("fid");
-  const channelId = searchParams.get("channelId");
-
-  if (!fid || !channelId) {
-    return NextResponse.json(
-      { error: "Missing required parameters" },
-      { status: 400, headers }
-    );
-  }
-
   try {
-    console.log(`Checking follow status for fid=${fid}, channelId=${channelId}`);
-    
+    const { searchParams } = new URL(request.url);
+    const fid = searchParams.get("fid");
+    const channelId = searchParams.get("channelId") || "talent";
+
+    if (!fid) {
+      return NextResponse.json({ error: "FID is required" }, { status: 400 });
+    }
+
+    console.log(`Checking follow status for FID ${fid} on channel ${channelId}`);
+
     const response = await fetch(
       `https://api.warpcast.com/v2/user-following-channel-status?fid=${fid}&channelId=${channelId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
       }
     );
 
     if (!response.ok) {
-      console.error(`Warpcast API error: ${response.status} ${response.statusText}`);
+      console.error("Warpcast API error:", await response.text());
       return NextResponse.json(
-        { error: `Warpcast API error: ${response.statusText}` },
-        { status: response.status, headers }
+        { error: "Failed to check follow status" },
+        { status: response.status }
       );
     }
 
     const data = await response.json();
-    console.log("Warpcast API response:", JSON.stringify(data, null, 2));
-    
-    return NextResponse.json(data, { headers });
+    console.log("Follow status response:", data);
+
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Error checking channel follow status:", error);
+    console.error("Error checking follow status:", error);
     return NextResponse.json(
-      { error: "Failed to check follow status" },
-      { status: 500, headers }
+      { error: "Internal server error" },
+      { status: 500 }
     );
   }
+}
+
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Max-Age": "86400",
+    },
+  });
 } 
